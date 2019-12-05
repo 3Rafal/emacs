@@ -5,7 +5,8 @@
 		     org-bullets
 		     csharp-mode
 		     omnisharp
-		     magit))
+		     magit
+		     evil-magit))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -43,6 +44,9 @@
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;; use Evil-Magit
+(require 'evil-magit)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
