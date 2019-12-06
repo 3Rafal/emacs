@@ -2,20 +2,24 @@
 
 ; List the packages you want
 (setq package-list '(evil
+		     auto-complete
 		     org-bullets
 		     csharp-mode
 		     omnisharp
 		     magit
-		     evil-magit))
+		     evil-magit
+		     helm
+		     spacemacs-theme))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "https://melpa.org/packages/") t)
 
 ; Activate all the packages (in particular autoloads)
 (package-initialize)
 
+(load-theme 'spacemacs-light t)
 ; Update your local package index
 (unless package-archive-contents
   (package-refresh-contents))
@@ -29,6 +33,13 @@
 (setq evil-want-C-u-scroll t)
 (require 'evil)
 (evil-mode t)
+
+;; helm setup
+(require 'helm-config)
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+;; Default autocompletion
+(ac-config-default)
 
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
