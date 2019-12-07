@@ -36,10 +36,24 @@
 
 ;; helm setup
 (require 'helm-config)
+(require 'helm)
+(helm-autoresize-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
+(setq helm-autoresize-max-height 30)
+(setq helm-autoresize-min-height 30)
+(setq helm-display-header-line nil)
 
-;; Default autocompletion
+; Autocompletion settings
 (ac-config-default)
+;; trigger completion with TAB
+(ac-set-trigger-key "TAB")
+;; C-n C-p navigation
+(setq ac-use-menu-map t)
+(define-key ac-menu-map "\C-n" 'ac-next)
+(define-key ac-menu-map "\C-p" 'ac-previous)
+;; complete wit TAB
+(define-key ac-completing-map "\t" 'ac-complete)
+(define-key ac-completing-map "\r" nil)
 
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
