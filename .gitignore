@@ -49,3 +49,9 @@ flycheck_*.el
 
 # cache
 .cache
+
+# transient
+/transient
+
+# a-c
+ac-comphist.dat
