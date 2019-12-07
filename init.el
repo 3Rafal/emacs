@@ -34,6 +34,9 @@
 (require 'evil)
 (evil-mode t)
 
+;; Non-blinking cursor in evil
+(blink-cursor-mode -1)
+
 ;; helm setup
 (require 'helm-config)
 (require 'helm)
@@ -69,7 +72,6 @@
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
-
 ;; use Evil-Magit
 (require 'evil-magit)
 
@@ -93,6 +95,9 @@
 
 ;; Hide startup screen
 (setq inhibit-startup-screen t)
+
+;; Start in full-screen
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;; Show line numbers
 (global-linum-mode t)
