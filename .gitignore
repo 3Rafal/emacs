@@ -51,7 +51,7 @@ flycheck_*.el
 .cache
 
 # transient
-/transient
+/transient/
 
 # a-c
 ac-comphist.dat
