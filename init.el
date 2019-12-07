@@ -2,6 +2,7 @@
 
 ; List the packages you want
 (setq package-list '(evil
+		     evil-collection
 		     auto-complete
 		     org-bullets
 		     csharp-mode
@@ -29,10 +30,13 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+; Evil mode
+(setq evil-want-keybinding nil)
 ;; scroll with C-u
 (setq evil-want-C-u-scroll t)
 (require 'evil)
 (evil-mode t)
+(evil-collection-init)
 
 ;; Non-blinking cursor in evil
 (blink-cursor-mode -1)
@@ -88,3 +92,17 @@
 
 ;; Show line numbers
 (global-linum-mode t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (evil-collection spacemacs-theme org-bullets omnisharp helm evil-magit evil-leader))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
