@@ -93,3 +93,9 @@
 
 ;; Show line numbers
 (global-linum-mode t)
+
+; Sort apropos by relevancy
+(setq apropos-sort-by-scores t)
+
+; Enable show-paren-mode
+(show-paren-mode 1)
