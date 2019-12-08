@@ -10,7 +10,11 @@
 		     magit
 		     evil-magit
 		     helm
-		     spacemacs-theme))
+		     spacemacs-theme
+		     projectile
+		     treemacs
+		     treemacs-evil
+		     treemacs-projectile))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -63,6 +67,11 @@
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+; Projectile default recommended
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
 ;; Electric-pair-mode in C#
 (defun my-csharp-mode-hook ()
   (electric-pair-local-mode 1) ;; Emacs 25
@@ -76,6 +85,9 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 ;; use Evil-Magit
 (require 'evil-magit)
+
+; Treemacs
+(global-set-key (kbd "C-x t") 'treemacs)
 
 ;; Disable menubar, toolbar and scrollbar
 (menu-bar-mode -1)
@@ -96,3 +108,17 @@
 
 ; Enable show-paren-mode
 (show-paren-mode 1)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (projectile spacemacs-theme org-bullets omnisharp helm evil-magit evil-leader evil-collection))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
