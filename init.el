@@ -3,7 +3,6 @@
 ; List the packages you want
 (setq package-list '(evil
 		     evil-collection
-		     auto-complete
 		     org-bullets
 		     csharp-mode
 		     omnisharp
@@ -14,7 +13,9 @@
 		     projectile
 		     treemacs
 		     treemacs-evil
-		     treemacs-projectile))
+		     treemacs-projectile
+		     company
+		     elpy))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -45,6 +46,9 @@
 ;; Non-blinking cursor in evil
 (blink-cursor-mode -1)
 
+; Company
+(add-hook 'after-init-hook 'global-company-mode)
+
 ;; helm setup
 (require 'helm-config)
 (require 'helm)
@@ -54,15 +58,6 @@
 (setq helm-autoresize-max-height 30)
 (setq helm-autoresize-min-height 30)
 (setq helm-display-header-line nil)
-
-; Autocompletion settings
-(ac-config-default)
-;; trigger completion with TAB
-(ac-set-trigger-key "TAB")
-(setq ac-use-menu-map t)
-;; complete wit TAB
-(define-key ac-completing-map "\t" 'ac-complete)
-(define-key ac-completing-map "\r" nil)
 
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -89,6 +84,9 @@
 ; Treemacs
 (global-set-key (kbd "C-x t") 'treemacs)
 
+; Enable elpy
+(elpy-enable)
+
 ;; Disable menubar, toolbar and scrollbar
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
@@ -105,6 +103,14 @@
 
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
+
+; Run powershell
+(defun run-powershell ()
+  "Run powershell"
+  (interactive)
+  (async-shell-command "c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe -Command -"
+               nil
+               nil))
 
 ; Enable show-paren-mode
 (show-paren-mode 1)
