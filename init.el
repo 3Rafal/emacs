@@ -17,7 +17,8 @@
 		     paredit
 		     geiser
 		     company
-		     elpy))
+		     elpy
+		     haskell-mode))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -64,6 +65,9 @@
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+;; Org-mode set width
+(setq-default fill-column 80)
+
 ; Projectile default recommended
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
@@ -77,6 +81,24 @@
 
 ;; Use Omnisharp
 (add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+;; Haskell setup
+;;; Haskell interactive
+(require 'haskell-interactive-mode)
+(require 'haskell-process)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(haskell-process-auto-import-loaded-modules t)
+ '(haskell-process-log t)
+ '(haskell-process-suggest-remove-import-lines t)
+ '(package-selected-packages
+   (quote
+    (projectile spacemacs-theme org-bullets omnisharp helm evil-magit evil-leader evil-collection))))
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
@@ -129,14 +151,7 @@
 
 ; Enable show-paren-mode
 (show-paren-mode 1)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (projectile spacemacs-theme org-bullets omnisharp helm evil-magit evil-leader evil-collection))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
