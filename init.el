@@ -87,6 +87,8 @@
 (require 'haskell-interactive-mode)
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;; disable eldoc in haskell-mode
+(add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
