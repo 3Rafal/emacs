@@ -88,7 +88,7 @@
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 ;; disable eldoc in haskell-mode
-(add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1))
+(add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -160,3 +160,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
