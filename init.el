@@ -85,6 +85,7 @@
 ;; Haskell setup
 ;;; Haskell interactive
 (require 'haskell-interactive-mode)
+(require 'haskell-indent)
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 ;; disable eldoc in haskell-mode
