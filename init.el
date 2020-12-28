@@ -149,3 +149,7 @@
  ;; If there is more than one, they won't work right.
  )
 
+; don't create backup and autosave files
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
