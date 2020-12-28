@@ -153,3 +153,8 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq create-lockfiles nil)
+
+; ido
+(ido-mode 1)
+(setq ido-everywhere t)
+(setq ido-enable-flex-matching t)
