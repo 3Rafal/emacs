@@ -6,7 +6,6 @@
 		     org-bullets
 		     omnisharp
 		     magit
-		     evil-magit
 		     fsharp-mode
 		     helm
 		     spacemacs-theme
@@ -103,8 +102,6 @@
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
-;; use Evil-Magit
-(require 'evil-magit)
 
 ; Treemacs
 (global-set-key (kbd "C-x t") 'treemacs)
