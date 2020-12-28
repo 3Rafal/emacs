@@ -4,10 +4,10 @@
 (setq package-list '(evil
 		     evil-collection
 		     org-bullets
-		     csharp-mode
 		     omnisharp
 		     magit
 		     evil-magit
+		     fsharp-mode
 		     helm
 		     spacemacs-theme
 		     projectile
@@ -49,6 +49,8 @@
 ;; Non-blinking cursor in evil
 (blink-cursor-mode -1)
 
+(global-set-key (kbd "M-u") 'universal-argument)
+
 ; Company
 (add-hook 'after-init-hook 'global-company-mode)
 
@@ -73,15 +75,6 @@
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
-;; Electric-pair-mode in C#
-(defun my-csharp-mode-hook ()
-  (electric-pair-local-mode 1) ;; Emacs 25
-  )
-(add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
-
-;; Use Omnisharp
-(add-hook 'csharp-mode-hook 'omnisharp-mode)
-
 ;; Haskell setup
 ;;; Haskell interactive
 (require 'haskell-interactive-mode)
@@ -91,6 +84,11 @@
 ;; disable eldoc in haskell-mode
 (add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1)))
 
+;; F#
+(require 'fsharp-mode)
+(require 'eglot-fsharp)
+(setq inferior-fsharp-program "dotnet fsi")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -99,9 +97,9 @@
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
+ '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   (quote
-    (projectile spacemacs-theme org-bullets omnisharp helm evil-magit evil-leader evil-collection))))
+   '(fsharp-mode projectile spacemacs-theme org-bullets omnisharp helm evil-leader evil-collection)))
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
@@ -143,14 +141,6 @@
 ; C-style
 (setq c-default-style "linux"
           c-basic-offset 4)
-
-; Run powershell
-(defun run-powershell ()
-  "Run powershell"
-  (interactive)
-  (async-shell-command "c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe -Command -"
-               nil
-               nil))
 
 ; Enable show-paren-mode
 (show-paren-mode 1)
