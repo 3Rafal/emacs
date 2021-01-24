@@ -7,17 +7,15 @@
 		     omnisharp
 		     magit
 		     fsharp-mode
-		     helm
-		     spacemacs-theme
 		     projectile
-		     treemacs
-		     treemacs-evil
-		     treemacs-projectile
 		     paredit
 		     geiser
 		     company
 		     elpy
-		     haskell-mode))
+		     haskell-mode
+		     csproj-mode
+		     omnisharp
+		     counsel))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -27,10 +25,15 @@
 ; Activate all the packages (in particular autoloads)
 (package-initialize)
 
-(load-theme 'spacemacs-light t)
 ; Update your local package index
 (unless package-archive-contents
   (package-refresh-contents))
+
+;; Initialize use-package
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)
 
 ; Install all missing packages
 (dolist (package package-list)
@@ -39,6 +42,8 @@
 
 ; Evil mode
 (setq evil-want-keybinding nil)
+;; make Esc quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 ;; scroll with C-u
 (setq evil-want-C-u-scroll t)
 (require 'evil)
@@ -52,16 +57,6 @@
 
 ; Company
 (add-hook 'after-init-hook 'global-company-mode)
-
-;; helm setup
-(require 'helm-config)
-(require 'helm)
-(helm-autoresize-mode 1)
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-x C-b") 'helm-mini)
-(setq helm-autoresize-max-height 30)
-(setq helm-autoresize-min-height 30)
-(setq helm-display-header-line nil)
 
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -86,7 +81,34 @@
 ;; F#
 (require 'fsharp-mode)
 (require 'eglot-fsharp)
+(require 'csproj-mode)
 (setq inferior-fsharp-program "dotnet fsi")
+
+;; C#
+(eval-after-load
+  'company
+  '(add-to-list 'company-backends #'company-omnisharp))
+
+(defun my-csharp-mode-setup ()
+  (omnisharp-mode)
+  (company-mode)
+  (flycheck-mode)
+
+  (setq indent-tabs-mode nil)
+  (setq c-syntactic-indentation t)
+  (c-set-style "ellemtel")
+  (setq c-basic-offset 4)
+  (setq truncate-lines t)
+  (setq tab-width 4)
+  (setq evil-shift-width 4)
+
+  (electric-pair-local-mode 1)
+
+  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
+  (local-set-key (kbd "C-c C-c") 'recompile))
+
+(add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -98,13 +120,23 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   '(fsharp-mode projectile spacemacs-theme org-bullets omnisharp helm evil-leader evil-collection)))
+   '(doom-themes which-key rainbow-delimiters doom-modeline use-package fsharp-mode projectile spacemacs-theme org-bullets omnisharp helm evil-leader evil-collection)))
 
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ; Treemacs
-(global-set-key (kbd "C-x t") 'treemacs)
+(use-package treemacs
+    :bind
+    (:map global-map
+	    ("C-x t" . treemacs)))
+
+(use-package treemacs-evil
+  :after treemacs evil)
+
+(use-package treemacs-projectile
+  :after treemacs projectile)
+
 
 ; Paredit
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
@@ -135,19 +167,10 @@
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
 
-; C-style
-(setq c-default-style "linux"
-          c-basic-offset 4)
-
 ; Enable show-paren-mode
 (show-paren-mode 1)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(set-face-attribute 'default nil :font "Fira Code Regular" :height 100)
 
 ; don't create backup and autosave files
 (setq make-backup-files nil)
@@ -156,5 +179,79 @@
 
 ; ido
 (ido-mode 1)
-(setq ido-everywhere t)
-(setq ido-enable-flex-matching t)
+
+;; Ivy config
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history)))
+
+;; doom modeline
+(use-package all-the-icons)
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package which-key
+  :init (which-key-mode)
+  :config (setq which-key-idle-delay 0.5))
+
+(use-package ivy-rich
+  :init (ivy-rich-mode 1))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one-light t)
+
+  ;; Enable flashing mode-line on errors
+  ;;(doom-themes-visual-bell-config)
+  
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  ;(doom-themes-neotree-config)
+  ;; or for treemacs users
+  ;;(setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  ;;(doom-themes-treemacs-config)
+  
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
