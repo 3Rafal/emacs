@@ -1,20 +1,26 @@
+;; Disable menubar, toolbar and scrollbar
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+
+;; Hide startup screen
+(setq inhibit-startup-screen t)
+
+;; Start in full-screen
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Show line numbers
+(global-linum-mode t)
+
 (require 'package)
 
 ; List the packages you want
-(setq package-list '(evil
-		     evil-collection
-		     org-bullets
-		     omnisharp
+(setq package-list '(org-bullets
 		     magit
 		     fsharp-mode
 		     projectile
-		     paredit
-		     geiser
-		     company
-		     elpy
 		     haskell-mode
 		     csproj-mode
-		     omnisharp
 		     counsel))
 
 ; Add Melpa as the default Emacs Package repository
@@ -41,22 +47,25 @@
     (package-install package)))
 
 ; Evil mode
-(setq evil-want-keybinding nil)
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump t)
+  :config
+  (evil-mode 1)
+  (blink-cursor-mode -1))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
 ;; make Esc quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;; scroll with C-u
-(setq evil-want-C-u-scroll t)
-(require 'evil)
-(evil-mode t)
-(evil-collection-init)
-
 ;; Non-blinking cursor in evil
-(blink-cursor-mode -1)
-
 (global-set-key (kbd "M-u") 'universal-argument)
-
-; Company
-(add-hook 'after-init-hook 'global-company-mode)
 
 ;; Use Org-Bullets in Org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -84,44 +93,6 @@
 (require 'csproj-mode)
 (setq inferior-fsharp-program "dotnet fsi")
 
-;; C#
-(eval-after-load
-  'company
-  '(add-to-list 'company-backends #'company-omnisharp))
-
-(defun my-csharp-mode-setup ()
-  (omnisharp-mode)
-  (company-mode)
-  (flycheck-mode)
-
-  (setq indent-tabs-mode nil)
-  (setq c-syntactic-indentation t)
-  (c-set-style "ellemtel")
-  (setq c-basic-offset 4)
-  (setq truncate-lines t)
-  (setq tab-width 4)
-  (setq evil-shift-width 4)
-
-  (electric-pair-local-mode 1)
-
-  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
-  (local-set-key (kbd "C-c C-c") 'recompile))
-
-(add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-log t)
- '(haskell-process-suggest-remove-import-lines t)
- '(helm-minibuffer-history-key "M-p")
- '(package-selected-packages
-   '(doom-themes which-key rainbow-delimiters doom-modeline use-package fsharp-mode projectile spacemacs-theme org-bullets omnisharp helm evil-leader evil-collection)))
-
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
 
@@ -136,33 +107,6 @@
 
 (use-package treemacs-projectile
   :after treemacs projectile)
-
-
-; Paredit
-(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-
-; Enable elpy
-(elpy-enable)
-
-;; Disable menubar, toolbar and scrollbar
-(menu-bar-mode -1)
-(toggle-scroll-bar -1)
-(tool-bar-mode -1)
-
-;; Hide startup screen
-(setq inhibit-startup-screen t)
-
-;; Start in full-screen
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; Show line numbers
-(global-linum-mode t)
 
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
@@ -236,15 +180,6 @@
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-one-light t)
-
-  ;; Enable flashing mode-line on errors
-  ;;(doom-themes-visual-bell-config)
-  
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  ;(doom-themes-neotree-config)
-  ;; or for treemacs users
-  ;;(setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-  ;;(doom-themes-treemacs-config)
   
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
