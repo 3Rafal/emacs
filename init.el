@@ -20,8 +20,7 @@
 		     fsharp-mode
 		     projectile
 		     haskell-mode
-		     csproj-mode
-		     counsel))
+		     csproj-mode))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
