@@ -17,10 +17,8 @@
 ; List the packages you want
 (setq package-list '(org-bullets
 		     magit
-		     fsharp-mode
 		     projectile
-		     haskell-mode
-		     csproj-mode))
+		     haskell-mode))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
@@ -86,12 +84,6 @@
 ;; disable eldoc in haskell-mode
 (add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1)))
 
-;; F#
-(require 'fsharp-mode)
-(require 'eglot-fsharp)
-(require 'csproj-mode)
-(setq inferior-fsharp-program "dotnet fsi")
-
 ;; Magit global status keybinding
 (global-set-key (kbd "C-x g") 'magit-status)
 
@@ -113,7 +105,7 @@
 ; Enable show-paren-mode
 (show-paren-mode 1)
 
-(set-face-attribute 'default nil :font "Fira Code Regular" :height 100)
+(set-face-attribute 'default nil :font "Fira Code" :height 100)
 
 ; don't create backup and autosave files
 (setq make-backup-files nil)
