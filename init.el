@@ -17,7 +17,6 @@
 ; List the packages you want
 (setq package-list '(org-bullets
 		     magit
-		     projectile
 		     haskell-mode))
 
 ; Add Melpa as the default Emacs Package repository
@@ -70,10 +69,17 @@
 ;; Org-mode set width
 (setq-default fill-column 80)
 
-; Projectile default recommended
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(use-package projectile
+  :diminish projectile-mode
+  :config
+  (projectile-mode)
+  :custom
+  ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
 ;; Haskell setup
 ;;; Haskell interactive
