@@ -16,7 +16,6 @@
 
 ; List the packages you want
 (setq package-list '(org-bullets
-		     magit
 		     haskell-mode))
 
 ; Add Melpa as the default Emacs Package repository
@@ -42,7 +41,6 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-; Evil mode
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -90,14 +88,17 @@
 ;; disable eldoc in haskell-mode
 (add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1)))
 
-;; Magit global status keybinding
-(global-set-key (kbd "C-x g") 'magit-status)
 
-; Treemacs
+(use-package magit
+  :ensure t
+  :diminish magit-auto-revert-mode
+  :diminish auto-revert-mode
+  :bind (("C-c g" . #'magit-status)))
+
 (use-package treemacs
     :bind
     (:map global-map
-	    ("C-x t" . treemacs)))
+	    ("C-c t" . treemacs)))
 
 (use-package treemacs-evil
   :after treemacs evil)
@@ -121,7 +122,6 @@
 ; ido
 (ido-mode 1)
 
-;; Ivy config
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
