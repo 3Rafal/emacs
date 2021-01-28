@@ -93,12 +93,12 @@
   :ensure t
   :diminish magit-auto-revert-mode
   :diminish auto-revert-mode
-  :bind (("C-c g" . #'magit-status)))
+  :bind (("C-x g" . #'magit-status)))
 
 (use-package treemacs
     :bind
     (:map global-map
-	    ("C-c t" . treemacs)))
+	    ("C-x t" . treemacs)))
 
 (use-package treemacs-evil
   :after treemacs evil)
