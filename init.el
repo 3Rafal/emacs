@@ -62,7 +62,9 @@
 (global-set-key (kbd "M-u") 'universal-argument)
 
 ;; Org 
-(use-package org)
+(use-package org
+  :config
+  (setq org-ellipsis " ▼"))
 
 (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
