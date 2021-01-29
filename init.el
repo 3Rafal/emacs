@@ -15,13 +15,13 @@
 (require 'package)
 
 ; List the packages you want
-(setq package-list '(org-bullets
-		     haskell-mode))
+(setq package-list '(haskell-mode))
 
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+	("org" . "https://orgmode.org/elpa")))
 
 ; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -61,8 +61,10 @@
 ;; Non-blinking cursor in evil
 (global-set-key (kbd "M-u") 'universal-argument)
 
-;; Use Org-Bullets in Org-mode
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;; Org 
+(use-package org)
+(use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
 
 ;; Org-mode set width
 (setq-default fill-column 80)
