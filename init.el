@@ -193,9 +193,12 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(use-package company
+  :defer t
+  :init (global-company-mode)
+  :config
+  (progn
+    (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+    (setq company-dabbrev-downcase nil))
+  :diminish company-mode)
+
