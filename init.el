@@ -63,8 +63,16 @@
 
 ;; Org 
 (use-package org)
+
 (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
+
+(use-package evil-org
+  :after org
+  :hook (org-mode . evil-org-mode)
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 ;; Org-mode set width
 (setq-default fill-column 80)
