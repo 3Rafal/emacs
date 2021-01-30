@@ -244,3 +244,7 @@
     (setq company-dabbrev-downcase nil))
   :diminish company-mode)
 
+(use-package term
+  :config
+  (setq explicit-shell-file-name "bash")
+  (setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *"))
