@@ -96,14 +96,20 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
+;; .NET
+(use-package fsharp-mode
+  :defer t)
+(use-package csproj-mode
+  :defer t)
+
 ;; Haskell setup
-;;; Haskell interactive
 (use-package haskell-mode
   :hook
   (haskell-mode . interactive-haskell-mode))
 
 (use-package lsp-mode
-  :hook (haskell-mode . lsp)
+  :hook ((haskell-mode . lsp)
+	 (fsharp-mode . lsp))
   :commands lsp
   :init
   (setq lsp-use-native-json t)
