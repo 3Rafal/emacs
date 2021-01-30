@@ -3,6 +3,9 @@
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
 
+; Enable show-paren-mode
+(show-paren-mode 1)
+
 ;; Hide startup screen
 (setq inhibit-startup-screen t)
 
@@ -14,14 +17,12 @@
 
 (require 'package)
 
-; List the packages you want
-(setq package-list '(haskell-mode))
-
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-	("org" . "https://orgmode.org/elpa")))
+	("org"   . "https://orgmode.org/elpa")
+	("gnu"   . "http://elpa.gnu.org/packages/")))
 
 ; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -35,11 +36,6 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
-
-; Install all missing packages
-(dolist (package package-list)
-  (unless (package-installed-p package)
-    (package-install package)))
 
 (use-package evil
   :init
@@ -102,13 +98,46 @@
 
 ;; Haskell setup
 ;;; Haskell interactive
-(require 'haskell-interactive-mode)
-(require 'haskell-indent)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-;; disable eldoc in haskell-mode
-(add-hook 'haskell-mode-hook #'(lambda () (eldoc-mode -1)))
+(use-package haskell-mode
+  :hook
+  (haskell-mode . interactive-haskell-mode))
 
+(use-package lsp-mode
+  :hook (haskell-mode . lsp)
+  :commands lsp
+  :init
+  (setq lsp-use-native-json t)
+  (setq lsp-print-performance nil)
+  (setq lsp-log-io nil)
+  (setq lsp-diagnostics-modeline-scope :project)
+  (setq lsp-file-watch-threshold 5000)
+  ;; (setq lsp-signature-auto-activate nil)
+  (setq lsp-ui-doc-show-with-cursor nil))
+
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :init
+  (setq lsp-ui-doc-position (quote bottom))
+  :config
+  (setq company-minimum-prefix-length 1)
+  (eldoc-mode -1))
+
+(use-package lsp-haskell
+ :config
+ (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper")
+ (setq lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv)))
+ (setq lsp-haskell-process-args-hie nil)
+ ;; Comment/uncomment this line to see interactions between lsp client/server.
+ ;(setq lsp-log-io t)
+ ;; (define-key evil-normal-state-map "gd" 'intero-goto-definition)
+ (define-key evil-normal-state-map "gn" 'flycheck-next-error)
+ (define-key evil-normal-state-map "gp" 'flycheck-previous-error))
+
+(use-package ormolu
+ ; :hook (haskell-mode . ormolu-format-on-save-mode)
+ :bind
+ (:map haskell-mode-map
+   ("C-c r" . ormolu-format-buffer)))
 
 (use-package magit
   :ensure t
@@ -130,8 +159,6 @@
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
 
-; Enable show-paren-mode
-(show-paren-mode 1)
 
 (set-face-attribute 'default nil :font "Fira Code" :height 100)
 
