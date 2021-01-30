@@ -62,12 +62,21 @@
 (global-set-key (kbd "M-u") 'universal-argument)
 
 ;; Org 
+(defun org-hyphen-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
+
 (use-package org
   :config
-  (setq org-ellipsis " ▼"))
+  (setq org-ellipsis " ▼")
+  (org-hyphen-setup))
 
 (use-package org-bullets
-    :hook (org-mode . org-bullets-mode))
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (use-package evil-org
   :after org
