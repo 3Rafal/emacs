@@ -248,3 +248,10 @@
   :config
   (setq explicit-shell-file-name "bash")
   (setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *"))
+
+(use-package vterm
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+  (setq vterm-max-scrollback 10000))
+
