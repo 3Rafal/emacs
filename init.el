@@ -98,7 +98,11 @@
 
 ;; .NET
 (use-package fsharp-mode
-  :defer t)
+  :defer t
+  :init
+  (setq inferior-fsharp-program "dotnet fsi --readline-")
+  (setq fsharp-autosave-on-file-load t))
+
 (use-package csproj-mode
   :defer t)
 
