@@ -37,6 +37,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package lisp-mode
+  :ensure nil
+  :commands emacs-lisp-mode
+  :bind (("C-c C-r" . 'eval-region)
+	 ("C-c C-l" . 'eval-buffer)))
+
 (use-package evil
   :init
   (setq evil-want-integration t)
