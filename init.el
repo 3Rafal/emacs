@@ -45,10 +45,10 @@
 
 (use-package evil
   :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump t)
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+	evil-want-C-u-scroll t
+	evil-want-C-i-jump t)
   :config
   (evil-mode 1)
   (blink-cursor-mode -1))
@@ -106,8 +106,8 @@
 (use-package fsharp-mode
   :defer t
   :init
-  (setq inferior-fsharp-program "dotnet fsi --readline-")
-  (setq fsharp-autosave-on-file-load t))
+  (setq inferior-fsharp-program "dotnet fsi --readline-"
+	fsharp-autosave-on-file-load t))
 
 (use-package csproj-mode
   :defer t)
@@ -122,13 +122,12 @@
 	 (fsharp-mode . lsp))
   :commands lsp
   :init
-  (setq lsp-use-native-json t)
-  (setq lsp-print-performance nil)
-  (setq lsp-log-io nil)
-  (setq lsp-diagnostics-modeline-scope :project)
-  (setq lsp-file-watch-threshold 5000)
-  ;; (setq lsp-signature-auto-activate nil)
-  (setq lsp-ui-doc-show-with-cursor nil))
+  (setq lsp-use-native-json t
+	lsp-print-performance nil
+	lsp-log-io nil
+	lsp-diagnostics-modeline-scope :project
+	lsp-file-watch-threshold 5000
+	lsp-ui-doc-show-with-cursor nil))
 
 (use-package lsp-ui
   :commands lsp-ui-mode
@@ -140,9 +139,9 @@
 
 (use-package lsp-haskell
  :config
- (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper")
- (setq lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv)))
- (setq lsp-haskell-process-args-hie nil)
+ (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
+       lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
+       lsp-haskell-process-args-hie nil)
  ;; Comment/uncomment this line to see interactions between lsp client/server.
  ;(setq lsp-log-io t)
  ;; (define-key evil-normal-state-map "gd" 'intero-goto-definition)
@@ -179,9 +178,9 @@
 (set-face-attribute 'default nil :font "Fira Code" :height 100)
 
 ; don't create backup and autosave files
-(setq make-backup-files nil)
-(setq auto-save-default nil)
-(setq create-lockfiles nil)
+(setq make-backup-files nil
+      auto-save-default nil
+      create-lockfiles nil)
 
 ; ido
 (ido-mode 1)
@@ -264,8 +263,8 @@
 (use-package vterm
   :commands vterm
   :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-  (setq vterm-max-scrollback 10000))
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"
+        vterm-max-scrollback 10000))
 
 (use-package eshell-git-prompt)
 (use-package eshell
@@ -296,8 +295,8 @@
   :config
 
   (with-eval-after-load 'esh-opt
-    (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop")))
+    (setq eshell-destroy-buffer-when-process-dies t
+          eshell-visual-commands '("htop")))
 
   (eshell-git-prompt-use-theme 'robbyrussell))
 
