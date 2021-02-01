@@ -6,8 +6,9 @@
 ; Enable show-paren-mode
 (show-paren-mode 1)
 
-;; Hide startup screen
-(setq inhibit-startup-screen t)
+;; Minimalistic startup
+(setq inhibit-startup-screen t
+      initial-scratch-message nil)
 
 ;; Start in full-screen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
