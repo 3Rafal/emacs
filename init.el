@@ -13,9 +13,6 @@
 ;; Start in full-screen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; Show line numbers
-(global-linum-mode t)
-
 (require 'package)
 
 ; Add Melpa as the default Emacs Package repository
@@ -300,4 +297,15 @@
           eshell-visual-commands '("htop")))
 
   (eshell-git-prompt-use-theme 'robbyrussell))
+
+(use-package geiser)
+
+(use-package hydra)
+
+(defhydra hydra-zoom (global-map "C-c h z")
+  "zoom"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("r" (text-scale-set 0) "reset")
+  ("e" (text-scale-set 0) nil :bind nil :exit t))
 
