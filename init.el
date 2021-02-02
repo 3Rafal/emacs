@@ -73,11 +73,6 @@
   (setq org-ellipsis " ▼")
   (rg/org-hyphen-setup))
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
 (use-package evil-org
   :after org
   :hook (org-mode . evil-org-mode)
