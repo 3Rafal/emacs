@@ -96,6 +96,11 @@
   :config (counsel-projectile-mode))
 
 ;; .NET
+;;;; Supress 'Package cl is deprecated' warning
+(setq byte-compile-warnings '(cl-functions))
+(use-package eglot-fsharp
+  :defer t)
+
 (use-package fsharp-mode
   :defer t
   :init
