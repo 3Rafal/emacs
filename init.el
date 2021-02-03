@@ -304,3 +304,12 @@
   ("r" (text-scale-set 0) "reset")
   ("e" (text-scale-set 0) nil :bind nil :exit t))
 
+(use-package elpy
+  :init
+  (elpy-enable))
+
+;; Does it work?
+(add-to-list 'process-coding-system-alist '("elpy" . (utf-8 . utf-8)))
+(add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8)))
+(add-to-list 'process-coding-system-alist '("flake8" . (utf-8 . utf-8)))
+
