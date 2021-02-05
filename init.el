@@ -70,7 +70,8 @@
 
 (use-package org
   :config
-  (setq org-ellipsis " ▼")
+  (setq org-ellipsis " ▼"
+	org-startup-indented t)
   (rg/org-hyphen-setup))
 
 (use-package evil-org
