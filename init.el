@@ -247,6 +247,15 @@
     (setq company-dabbrev-downcase nil))
   :diminish company-mode)
 
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-up-directory
+    "l" 'dired-find-file))
+
 ; terms/shells
 
 (use-package term
