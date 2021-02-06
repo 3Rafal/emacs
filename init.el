@@ -38,6 +38,9 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; TODO: consider switching to defer by default
+;; (setq use-package-always-defer t)
+
 ;; Package load debug
 ;;(setq use-package-verbose t)
 
