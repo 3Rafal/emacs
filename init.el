@@ -13,6 +13,9 @@
 ;; Start in full-screen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; Large threshold for init
+(setq gc-cons-threshold (* 100 1000 1000))
+
 (require 'package)
 
 ; Add Melpa as the default Emacs Package repository
@@ -34,6 +37,11 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; Package load debug
+;;(setq use-package-verbose t)
+
+(use-package no-littering)
 
 (use-package lisp-mode
   :ensure nil
@@ -69,6 +77,7 @@
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
 
 (use-package org
+  :defer t
   :config
   (setq org-ellipsis " ▼"
 	org-startup-indented t)
@@ -81,10 +90,8 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-;; Org-mode set width
-(setq-default fill-column 80)
-
 (use-package projectile
+  :defer t
   :diminish projectile-mode
   :config
   (projectile-mode)
@@ -94,6 +101,7 @@
   ("C-c p" . projectile-command-map))
 
 (use-package counsel-projectile
+  :after projectile
   :config (counsel-projectile-mode))
 
 ;; .NET
@@ -113,6 +121,7 @@
 
 ;; Haskell setup
 (use-package haskell-mode
+  :defer t
   :hook
   (haskell-mode . interactive-haskell-mode))
 
@@ -137,37 +146,41 @@
   (eldoc-mode -1))
 
 (use-package lsp-haskell
- :config
- (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
-       lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
-       lsp-haskell-process-args-hie nil)
- ;; Comment/uncomment this line to see interactions between lsp client/server.
+  :after haskell-mode
+  :config
+  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
+	lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
+	lsp-haskell-process-args-hie nil)
+  ;; Comment/uncomment this line to see interactions between lsp client/server.
  ;(setq lsp-log-io t)
- ;; (define-key evil-normal-state-map "gd" 'intero-goto-definition)
- (define-key evil-normal-state-map "gn" 'flycheck-next-error)
- (define-key evil-normal-state-map "gp" 'flycheck-previous-error))
+  ;; (define-key evil-normal-state-map "gd" 'intero-goto-definition)
+  (define-key evil-normal-state-map "gn" 'flycheck-next-error)
+  (define-key evil-normal-state-map "gp" 'flycheck-previous-error))
 
 (use-package ormolu
+  :defer t
  ; :hook (haskell-mode . ormolu-format-on-save-mode)
- :bind
- (:map haskell-mode-map
-   ("C-c r" . ormolu-format-buffer)))
+  :bind
+  (:map haskell-mode-map
+	("C-c r" . ormolu-format-buffer)))
 
 (use-package magit
-  :ensure t
+  :defer t
   :diminish magit-auto-revert-mode
   :diminish auto-revert-mode
   :bind (("C-x g" . #'magit-status)))
 
 (use-package treemacs
-    :bind
-    (:map global-map
-	    ("C-x t" . treemacs)))
+  :bind
+  (:map global-map
+	("C-x t" . treemacs)))
 
 (use-package treemacs-evil
+  :defer t
   :after treemacs evil)
 
 (use-package treemacs-projectile
+  :defer t
   :after treemacs projectile)
 
 ; Sort apropos by relevancy
@@ -201,6 +214,10 @@
   :config
   (ivy-mode 1))
 
+(use-package ivy-rich
+  :after ivy
+  :init (ivy-rich-mode 1))
+
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
@@ -217,13 +234,15 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package which-key
-  :init (which-key-mode)
-  :config (setq which-key-idle-delay 0.5))
-
-(use-package ivy-rich
-  :init (ivy-rich-mode 1))
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
 
 (use-package helpful
+  :commands (helpful-callable
+	     helpful-variable
+	     helpful-command
+	     helpful-key)
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
@@ -245,8 +264,8 @@
 
 (use-package company
   :defer t
-  :init (global-company-mode)
   :config
+  (global-company-mode)
   (progn
     (bind-key [remap completion-at-point] #'company-complete company-mode-map)
     (setq company-dabbrev-downcase nil))
@@ -254,6 +273,7 @@
 
 ; dired
 (use-package dired
+  :defer t
   :ensure nil
   :commands (dired dired-jump)
   :custom ((dired-listing-switches "-agho --group-directories-first"))
@@ -263,9 +283,12 @@
     "h" 'dired-up-directory
     "l" 'dired-find-file))
 
-(use-package dired-single)
+(use-package dired-single
+  :after dired)
+
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
+
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
@@ -275,6 +298,7 @@
 ; terms/shells
 
 (use-package term
+  :commands term
   :config
   (setq explicit-shell-file-name "bash")
   (setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *"))
@@ -284,11 +308,6 @@
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"
         vterm-max-scrollback 10000))
-
-(use-package eshell-git-prompt)
-(use-package eshell
-  :config
-  (eshell-git-prompt-use-theme 'robbyrussell))
 
 (defun rg/configure-eshell ()
   ;; Save command history when commands are entered
@@ -307,21 +326,24 @@
         eshell-hist-ignoredups t
         eshell-scroll-to-bottom-on-input t))
 
-(use-package eshell-git-prompt)
-
 (use-package eshell
+  :defer t ;; TODO: eshell is still loaded on init...
   :hook (eshell-first-time-mode . rg/configure-eshell)
   :config
-
   (with-eval-after-load 'esh-opt
     (setq eshell-destroy-buffer-when-process-dies t
-          eshell-visual-commands '("htop")))
+          eshell-visual-commands '("htop"))))
 
+(use-package eshell-git-prompt
+  :after eshell
+  :config
   (eshell-git-prompt-use-theme 'robbyrussell))
 
-(use-package geiser)
+(use-package geiser
+  :defer t)
 
-(use-package hydra)
+(use-package hydra
+  :defer t)
 
 (defhydra hydra-zoom (global-map "C-c h z")
   "zoom"
@@ -331,6 +353,7 @@
   ("e" (text-scale-set 0) nil :bind nil :exit t))
 
 (use-package elpy
+  :defer t
   :init
   (elpy-enable))
 
@@ -339,3 +362,14 @@
 (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8)))
 (add-to-list 'process-coding-system-alist '("flake8" . (utf-8 . utf-8)))
 
+;; Measure performance
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+;; Bring back to small threshold after init.
+(setq gc-cons-threshold (* 5 1000 1000))
