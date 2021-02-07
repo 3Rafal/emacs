@@ -179,7 +179,6 @@
 	("C-x t" . treemacs)))
 
 (use-package treemacs-evil
-  :defer t
   :after treemacs evil)
 
 (use-package treemacs-projectile
