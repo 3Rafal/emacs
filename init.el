@@ -93,6 +93,34 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package org-roam
+  :hook
+  (after-init . org-roam-mode)
+  :custom
+  (org-roam-directory "~/org-life/roam/")
+  (org-roam-db-location "~/org-life/roam/db.sqlite")
+  (org-roam-dailies-directory "daily/")
+  (org-roam-file-completion-tag-position 'append)
+  :bind (:map org-roam-mode-map
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n g" . org-roam-graph)
+	       ("C-c n t" . org-roam-dailies-find-today)
+	       ("C-c n m" . org-roam-dailies-find-tomorrow)
+	       ("C-c n y" . org-roam-dailies-find-yesterday)
+	       ("C-c n a" . org-roam-tag-add))
+	 :map org-mode-map
+	      (("C-c n i" . org-roam-insert))
+	      (("C-c n I" . org-roam-insert-immediate))))
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         (function org-roam-capture--get-point)
+         "%?"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+title: ${title}\n\n\n"
+         :unnarrowed t)))
+
 (use-package projectile
   :defer t
   :diminish projectile-mode
