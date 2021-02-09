@@ -44,6 +44,15 @@
 ;; Package load debug
 ;;(setq use-package-verbose t)
 
+(use-package auto-package-update
+  :custom
+  (auto-package-update-interval 7)
+  (auto-package-prompt-before-update t)
+  (auto-package-update-hide-results t)
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "9:00"))
+
 (use-package no-littering)
 
 (use-package lisp-mode
