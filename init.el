@@ -111,7 +111,9 @@
 	       ("C-c n a" . org-roam-tag-add))
 	 :map org-mode-map
 	      (("C-c n i" . org-roam-insert))
-	      (("C-c n I" . org-roam-insert-immediate))))
+	      (("C-c n I" . org-roam-insert-immediate)))
+  :init
+  (setq org-roam-db-update-method 'immediate))
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
