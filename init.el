@@ -263,6 +263,8 @@
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
+	 ;; ("C-c C-r" . counsel-rg)
+	 ("C-c C-p" . counsel-projectile-rg)
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history)))
 
