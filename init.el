@@ -200,7 +200,7 @@
   (define-key evil-normal-state-map "gp" 'flycheck-previous-error))
 
 (use-package ormolu
-  :defer t
+  :after haskell-mode
  ; :hook (haskell-mode . ormolu-format-on-save-mode)
   :bind
   (:map haskell-mode-map
