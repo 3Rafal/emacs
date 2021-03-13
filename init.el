@@ -11,7 +11,7 @@
       initial-scratch-message nil)
 
 ;; Start in full-screen
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;; Large threshold for init
 (setq gc-cons-threshold (* 100 1000 1000))
