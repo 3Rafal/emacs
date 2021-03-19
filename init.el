@@ -162,10 +162,27 @@
   :defer t)
 
 ;; Haskell setup
+(defun rg/haskell-evil-open-above ()
+  (interactive)
+  (evil-digit-argument-or-evil-beginning-of-line)
+  (haskell-indentation-newline-and-indent)
+  (evil-previous-line)
+  (haskell-indentation-indent-line)
+  (evil-append-line nil))
+
+(defun rg/haskell-evil-open-below ()
+  (interactive)
+  (evil-append-line nil)
+  (haskell-indentation-newline-and-indent))
+
 (use-package haskell-mode
   :defer t
   :hook
-  (haskell-mode . interactive-haskell-mode))
+  (haskell-mode . interactive-haskell-mode)
+  :config
+  (evil-collection-define-key 'normal 'haskell-mode-map
+    "o" 'rg/haskell-evil-open-below
+    "O" 'rg/haskell-evil-open-above))
 
 (use-package lsp-mode
   :hook ((haskell-mode . lsp)
