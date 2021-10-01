@@ -9,7 +9,7 @@
 ;; Minimalistic startup
 (setq inhibit-startup-screen t
       initial-scratch-message nil)
-
+(setq column-number-mode t)
 ;; Start in full-screen
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -46,7 +46,7 @@
 
 (use-package auto-package-update
   :custom
-  (auto-package-update-interval 7)
+  (auto-package-update-interval 21)
   (auto-package-prompt-before-update t)
   (auto-package-update-hide-results t)
   :config
@@ -54,6 +54,7 @@
   (auto-package-update-at-time "9:00"))
 
 (use-package no-littering)
+(setq-default tab-width 4)
 
 (use-package lisp-mode
   :ensure nil
@@ -102,36 +103,6 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-(use-package org-roam
-  :hook
-  (after-init . org-roam-mode)
-  :custom
-  (org-roam-directory "~/org-life/roam/")
-  (org-roam-db-location "~/org-life/roam/db.sqlite")
-  (org-roam-dailies-directory "daily/")
-  (org-roam-file-completion-tag-position 'append)
-  :bind (:map org-roam-mode-map
-	      (("C-c n l" . org-roam)
-	       ("C-c n f" . org-roam-find-file)
-	       ("C-c n g" . org-roam-graph)
-	       ("C-c n t" . org-roam-dailies-find-today)
-	       ("C-c n m" . org-roam-dailies-find-tomorrow)
-	       ("C-c n y" . org-roam-dailies-find-yesterday)
-	       ("C-c n a" . org-roam-tag-add))
-	 :map org-mode-map
-	      (("C-c n i" . org-roam-insert))
-	      (("C-c n I" . org-roam-insert-immediate)))
-  :init
-  (setq org-roam-db-update-method 'immediate))
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         (function org-roam-capture--get-point)
-         "%?"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+title: ${title}\n\n\n"
-         :unnarrowed t)))
-
 (use-package projectile
   :defer t
   :diminish projectile-mode
@@ -149,8 +120,8 @@
 ;; .NET
 ;;;; Supress 'Package cl is deprecated' warning
 (setq byte-compile-warnings '(cl-functions))
-(use-package eglot-fsharp
-  :defer t)
+;; (use-package eglot-fsharp
+;;   :defer t)
 
 (use-package fsharp-mode
   :defer t
@@ -179,10 +150,16 @@
   :defer t
   :hook
   (haskell-mode . interactive-haskell-mode)
+  (haskell-mode . yas-minor-mode)
   :config
   (evil-collection-define-key 'normal 'haskell-mode-map
     "o" 'rg/haskell-evil-open-below
     "O" 'rg/haskell-evil-open-above))
+
+(use-package yasnippet)
+(use-package haskell-snippets)
+;; (custom-set-variables
+;;   '(haskell-process-type 'cabal-ghci))
 
 (use-package lsp-mode
   :hook ((haskell-mode . lsp)
@@ -245,7 +222,7 @@
 (setq apropos-sort-by-scores t)
 
 
-(set-face-attribute 'default nil :font "Fira Code" :height 100)
+(set-face-attribute 'default nil :family "mononoki" :height 115)
 
 ; don't create backup and autosave files
 (setq make-backup-files nil
@@ -422,6 +399,50 @@
 (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8)))
 (add-to-list 'process-coding-system-alist '("flake8" . (utf-8 . utf-8)))
 
+(use-package idris-mode)
+(setq idris-interpreter-path "~/.cabal/bin/idris")
+
+;; cpp
+(defun rg/compile-and-run ()
+  (interactive)
+  (let* ((src (file-name-nondirectory (buffer-file-name)))
+         (exe (file-name-sans-extension src)))
+    (compile (concat "g++ " src " -o " exe " && ./" exe))))
+
+(use-package yaml-mode)
+
+(add-hook 'c-mode-hook #'electric-pair-mode)
+
+;; ocaml
+(use-package tuareg
+  :hook (tuareg-mode . merlin-mode)
+  :hook (caml-mode . merlin-mode)
+  )
+(use-package merlin
+  :bind (:map merlin-mode-map
+			  ("C-c C-l" . tuareg-eval-buffer)
+			  ("C-c C-r" . tuareg-eval-region)
+			  )
+  )
+;;(add-hook 'caml-mode-hook #'merlin-mode)
+
+;; sml
+(use-package sml-mode)
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package psc-ide)
+(use-package purescript-mode)
+(add-hook 'purescript-mode-hook
+  (lambda ()
+    (psc-ide-mode)
+    (company-mode)
+    (flycheck-mode)
+    (turn-on-purescript-indentation)))
+
 ;; Measure performance
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -433,3 +454,29 @@
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+
+;; auto-load agda-mode for .agda and .lagda.md
+(setq auto-mode-alist
+   (append
+     '(("\\.agda\\'" . agda2-mode)
+       ("\\.lagda.md\\'" . agda2-mode))
+     auto-mode-alist))
