@@ -443,6 +443,9 @@
     (flycheck-mode)
     (turn-on-purescript-indentation)))
 
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
 ;; Measure performance
 (add-hook 'emacs-startup-hook
           (lambda ()
