@@ -117,21 +117,7 @@
   :after projectile
   :config (counsel-projectile-mode))
 
-;; .NET
-;;;; Supress 'Package cl is deprecated' warning
-(setq byte-compile-warnings '(cl-functions))
-;; (use-package eglot-fsharp
-;;   :defer t)
-
-(use-package fsharp-mode
-  :defer t
-  :init
-  (setq inferior-fsharp-program "dotnet fsi --readline-"
-	fsharp-autosave-on-file-load t))
-
-(use-package csproj-mode
-  :defer t)
-
+(use-package direnv)
 ;; Haskell setup
 (defun rg/haskell-evil-open-above ()
   (interactive)
@@ -158,8 +144,8 @@
 
 (use-package yasnippet)
 (use-package haskell-snippets)
-;; (custom-set-variables
-;;   '(haskell-process-type 'cabal-ghci))
+(custom-set-variables
+  '(haskell-process-type 'cabal-new-repl))
 
 (use-package lsp-mode
   :hook ((haskell-mode . lsp)
@@ -171,12 +157,17 @@
 	lsp-log-io nil
 	lsp-diagnostics-modeline-scope :project
 	lsp-file-watch-threshold 5000
-	lsp-ui-doc-show-with-cursor nil))
+	lsp-ui-doc-show-with-cursor nil)
+  ;;:config
+  ;; This is to make `lsp-mode' work with `direnv' and pick up the correct
+  ;; version of GHC.
+  ;;(advice-add 'lsp :before #'direnv-update-environment)
+  )
 
 (use-package lsp-ui
   :commands lsp-ui-mode
   :init
-  (setq lsp-ui-doc-position (quote bottom))
+  (setq lsp-ui-doc-position 'bottom)
   :config
   (setq company-minimum-prefix-length 1)
   (eldoc-mode -1))
@@ -206,23 +197,11 @@
   :diminish auto-revert-mode
   :bind (("C-x g" . #'magit-status)))
 
-(use-package treemacs
-  :bind
-  (:map global-map
-	("C-x t" . treemacs)))
-
-(use-package treemacs-evil
-  :after treemacs evil)
-
-(use-package treemacs-projectile
-  :defer t
-  :after treemacs projectile)
-
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
 
 
-(set-face-attribute 'default nil :family "mononoki" :height 115)
+(set-face-attribute 'default nil :family "mononoki")
 
 ; don't create backup and autosave files
 (setq make-backup-files nil
@@ -257,6 +236,7 @@
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
+         ("C-c C-a" . counsel-ag)
 	 ;; ("C-c C-r" . counsel-rg)
 	 ("C-c C-p" . counsel-projectile-rg)
          :map minibuffer-local-map
@@ -446,6 +426,7 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
+(use-package agda2-mode)
 ;; Measure performance
 (add-hook 'emacs-startup-hook
           (lambda ()
