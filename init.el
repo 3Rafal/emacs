@@ -10,6 +10,7 @@
 (setq inhibit-startup-screen t
       initial-scratch-message nil)
 (setq column-number-mode t)
+
 ;; Start in full-screen
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -21,7 +22,7 @@
 ; Add Melpa as the default Emacs Package repository
 ; only contains a very limited number of packages
 (setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
+  '(("melpa" . "https://melpa.org/packages/")
 	("org"   . "https://orgmode.org/elpa")
 	("gnu"   . "http://elpa.gnu.org/packages/")))
 
@@ -77,10 +78,28 @@
   :config
   (evil-collection-init))
 
-;; make Esc quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;; Non-blinking cursor in evil
 (global-set-key (kbd "M-u") 'universal-argument)
+
+;; TRAMP
+(setq tramp-default-method "ssh")
+(add-hook 'find-file-hook
+          (lambda ()
+            (when (file-remote-p default-directory)
+              (setq-local projectile-mode-line "Projectile"))))
+(use-package docker-tramp)
+(add-to-list 'directory-abbrev-alist
+             '("^/revm" . "/ssh:user@10.244.1.1:/"))
+(add-to-list 'directory-abbrev-alist
+             '("^/srevm" . "/ssh:user@10.244.1.1|sudo::/"))
+(add-to-list 'directory-abbrev-alist
+             '("^/redo" . "/ssh:user@10.244.1.1|docker:user@devcontainer_dev_1:"))
+(setq remote-file-name-inhibit-cache nil)
+(setq vc-ignore-dir-regexp
+      (format "%s\\|%s"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp))
+(setq tramp-verbose 1)
 
 ;; Org 
 (defun rg/org-hyphen-setup ()
@@ -145,11 +164,17 @@
 (use-package yasnippet)
 (use-package haskell-snippets)
 (custom-set-variables
-  '(haskell-process-type 'cabal-new-repl))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
+ '(haskell-process-type 'cabal-new-repl)
+ '(package-selected-packages
+   '(docker-tramp direnv agda2-mode nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
 
 (use-package lsp-mode
-  :hook ((haskell-mode . lsp)
-	 (fsharp-mode . lsp))
+  :hook (haskell-mode . lsp)
   :commands lsp
   :init
   (setq lsp-use-native-json t
@@ -237,8 +262,8 @@
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
          ("C-c C-a" . counsel-ag)
-	 ;; ("C-c C-r" . counsel-rg)
-	 ("C-c C-p" . counsel-projectile-rg)
+	     ;; ("C-c C-r" . counsel-rg)
+	     ;; ("C-c C-p" . counsel-projectile-rg)
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history)))
 
@@ -286,7 +311,12 @@
   (progn
     (bind-key [remap completion-at-point] #'company-complete company-mode-map)
     (setq company-dabbrev-downcase nil))
-  :diminish company-mode)
+  :diminish company-mode
+  :bind (:map company-active-map
+			  ("<return>" . nil)
+			  ("RET" . nil)
+              ("<tab>" . company-complete-selection)))
+(setq tab-always-indent 'complete)
 
 ; dired
 (use-package dired
@@ -438,21 +468,15 @@
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(Info-quoted ((t (:inherit default)))))
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
 (load-file (let ((coding-system-for-read 'utf-8))
