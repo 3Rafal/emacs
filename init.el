@@ -14,6 +14,14 @@
 ;; Start in full-screen
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+(when (eq system-type 'darwin)
+  (setq mac-right-option-modifier 'none)
+  (setq frame-resize-pixelwise t))
+(setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0")
+; try not to use tab characters ever when formatting code
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+
 ;; Large threshold for init
 (setq gc-cons-threshold (* 100 1000 1000))
 
@@ -45,6 +53,11 @@
 ;; Package load debug
 ;;(setq use-package-verbose t)
 
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+(setq comint-input-ignoredups t)
+
 (use-package auto-package-update
   :custom
   (auto-package-update-interval 21)
@@ -69,6 +82,7 @@
         evil-want-keybinding nil
 	evil-want-C-u-scroll t
 	evil-want-C-i-jump t)
+  (setq-default evil-symbol-word-search nil)
   :config
   (evil-mode 1)
   (blink-cursor-mode -1))
@@ -94,13 +108,36 @@
              '("^/srevm" . "/ssh:user@10.244.1.1|sudo::/"))
 (add-to-list 'directory-abbrev-alist
              '("^/redo" . "/ssh:user@10.244.1.1|docker:user@devcontainer_dev_1:"))
+(add-to-list 'directory-abbrev-alist
+             '("^/rero" . "/ssh:user@10.244.1.1|docker:root@devcontainer_nginx_1:"))
+
+(add-to-list 'tramp-connection-properties
+             (list (regexp-quote "/ssh:re:")
+                   "direct-async-process" t
+                   "remote-shell" "/bin/zsh"))
 (setq remote-file-name-inhibit-cache nil)
 (setq vc-ignore-dir-regexp
       (format "%s\\|%s"
                     vc-ignore-dir-regexp
                     tramp-file-name-regexp))
+
+(setq vc-ignore-dir-regexp
+      (format "%s\\|%s"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
+
 (setq tramp-verbose 1)
 
+(defun go-local ()
+  "Shortcut for destroy all TRAMP connections and kill all associated buffers."
+  (interactive)
+  (ignore-errors (tramp-cleanup-all-connections))
+  (ignore-errors (tramp-cleanup-all-buffers)))
+
+(setq company-idle-delay 0.5
+      company-minimum-prefix-length 2
+      company-show-numbers t
+      )
 ;; Org 
 (defun rg/org-hyphen-setup ()
   ;; Replace list hyphen with dot
@@ -186,7 +223,7 @@
   ;;:config
   ;; This is to make `lsp-mode' work with `direnv' and pick up the correct
   ;; version of GHC.
-  ;;(advice-add 'lsp :before #'direnv-update-environment)
+  (advice-add 'lsp :before #'direnv-update-environment)
   )
 
 (use-package lsp-ui
@@ -261,7 +298,7 @@
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
-         ("C-c C-a" . counsel-ag)
+         ("C-c a" . counsel-ag)
 	     ;; ("C-c C-r" . counsel-rg)
 	     ;; ("C-c C-p" . counsel-projectile-rg)
          :map minibuffer-local-map
@@ -342,8 +379,11 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
-; terms/shells
+(use-package sh-script
+  :config
+  (setq sh-basic-offset 2))
 
+; terms/shells
 (use-package term
   :commands term
   :config
