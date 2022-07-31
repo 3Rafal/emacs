@@ -119,7 +119,7 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(tide typescript-mode dune merlin-eldoc ocp-indent utop exec-path-from-shell terraform-mode docker-tramp direnv agda2-mode nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(docker-tramp direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
 
 (use-package lsp-mode
   :hook (haskell-mode . lsp)
@@ -360,35 +360,6 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
-
-(setq insert-directory-program "gls" dired-use-ls-dired t)
-(setq dired-listing-switches "-al --group-directories-first")
-
-(use-package terraform-mode)
-
-(use-package typescript-mode)
-(use-package tide
-  :ensure t
-  :mode(("\\.ts\\'" . typescript-mode))
-  :config
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  (company-mode +1)
-  ;; formats the buffer before saving
-  (add-hook 'before-save-hook 'tide-format-before-save))
-
-;; Measure performance
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "*** Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
