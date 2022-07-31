@@ -76,49 +76,6 @@
   :bind (("C-c C-r" . 'eval-region)
 	 ("C-c C-l" . 'eval-buffer)))
 
-;; TRAMP
-(setq tramp-default-method "ssh")
-(add-hook 'find-file-hook
-          (lambda ()
-            (when (file-remote-p default-directory)
-              (setq-local projectile-mode-line "Projectile"))))
-(use-package docker-tramp)
-(add-to-list 'directory-abbrev-alist
-             '("^/revm" . "/ssh:user@10.244.1.1:/"))
-(add-to-list 'directory-abbrev-alist
-             '("^/srevm" . "/ssh:user@10.244.1.1|sudo::/"))
-(add-to-list 'directory-abbrev-alist
-             '("^/redo" . "/ssh:user@10.244.1.1|docker:user@devcontainer_dev_1:"))
-(add-to-list 'directory-abbrev-alist
-             '("^/rero" . "/ssh:user@10.244.1.1|docker:root@devcontainer_nginx_1:"))
-
-(add-to-list 'tramp-connection-properties
-             (list (regexp-quote "/ssh:re:")
-                   "direct-async-process" t
-                   "remote-shell" "/bin/zsh"))
-(setq remote-file-name-inhibit-cache nil)
-(setq vc-ignore-dir-regexp
-      (format "%s\\|%s"
-                    vc-ignore-dir-regexp
-                    tramp-file-name-regexp))
-
-(setq vc-ignore-dir-regexp
-      (format "%s\\|%s"
-              vc-ignore-dir-regexp
-              tramp-file-name-regexp))
-
-(setq tramp-verbose 1)
-
-(defun go-local ()
-  "Shortcut for destroy all TRAMP connections and kill all associated buffers."
-  (interactive)
-  (ignore-errors (tramp-cleanup-all-connections))
-  (ignore-errors (tramp-cleanup-all-buffers)))
-
-(setq company-idle-delay 0.5
-      company-minimum-prefix-length 2
-      company-show-numbers t
-      )
 ;; Org 
 (defun rg/org-hyphen-setup ()
   ;; Replace list hyphen with dot
@@ -347,36 +304,6 @@
 
 (use-package geiser
   :defer t)
-
-(use-package hydra
-  :defer t)
-
-(defhydra hydra-zoom (global-map "C-c h z")
-  "zoom"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("r" (text-scale-set 0) "reset")
-  ("e" (text-scale-set 0) nil :bind nil :exit t))
-
-(use-package elpy
-  :defer t
-  :init
-  (elpy-enable))
-
-;; Does it work?
-(add-to-list 'process-coding-system-alist '("elpy" . (utf-8 . utf-8)))
-(add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8)))
-(add-to-list 'process-coding-system-alist '("flake8" . (utf-8 . utf-8)))
-
-(use-package idris-mode)
-(setq idris-interpreter-path "~/.cabal/bin/idris")
-
-;; cpp
-(defun rg/compile-and-run ()
-  (interactive)
-  (let* ((src (file-name-nondirectory (buffer-file-name)))
-         (exe (file-name-sans-extension src)))
-    (compile (concat "g++ " src " -o " exe " && ./" exe))))
 
 (use-package yaml-mode)
 
