@@ -1,22 +1,22 @@
+
 ;; Disable menubar, toolbar and scrollbar
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
-
+(setq mac-command-modifier 'meta)
 ; Enable show-paren-mode
 (show-paren-mode 1)
+(blink-cursor-mode 0)
 
 ;; Minimalistic startup
 (setq inhibit-startup-screen t
       initial-scratch-message nil)
 (setq column-number-mode t)
 
-;; Start in full-screen
-;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
-  (setq frame-resize-pixelwise t))
+  (setq frame-resize-pixelwise t)
+  (setq mac-command-key-is-meta t))
 (setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0")
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -76,25 +76,6 @@
   :bind (("C-c C-r" . 'eval-region)
 	 ("C-c C-l" . 'eval-buffer)))
 
-(use-package evil
-  :init
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-	evil-want-C-u-scroll t
-	evil-want-C-i-jump t)
-  (setq-default evil-symbol-word-search nil)
-  :config
-  (evil-mode 1)
-  (blink-cursor-mode -1))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
-
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(global-set-key (kbd "M-u") 'universal-argument)
-
 ;; TRAMP
 (setq tramp-default-method "ssh")
 (add-hook 'find-file-hook
@@ -152,13 +133,6 @@
 	org-startup-indented t)
   (rg/org-hyphen-setup))
 
-(use-package evil-org
-  :after org
-  :hook (org-mode . evil-org-mode)
-  :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
-
 (use-package projectile
   :defer t
   :diminish projectile-mode
@@ -173,30 +147,11 @@
   :after projectile
   :config (counsel-projectile-mode))
 
-(use-package direnv)
-;; Haskell setup
-(defun rg/haskell-evil-open-above ()
-  (interactive)
-  (evil-digit-argument-or-evil-beginning-of-line)
-  (haskell-indentation-newline-and-indent)
-  (evil-previous-line)
-  (haskell-indentation-indent-line)
-  (evil-append-line nil))
-
-(defun rg/haskell-evil-open-below ()
-  (interactive)
-  (evil-append-line nil)
-  (haskell-indentation-newline-and-indent))
-
 (use-package haskell-mode
   :defer t
   :hook
   (haskell-mode . interactive-haskell-mode)
-  (haskell-mode . yas-minor-mode)
-  :config
-  (evil-collection-define-key 'normal 'haskell-mode-map
-    "o" 'rg/haskell-evil-open-below
-    "O" 'rg/haskell-evil-open-above))
+  (haskell-mode . yas-minor-mode))
 
 (use-package yasnippet)
 (use-package haskell-snippets)
@@ -206,9 +161,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
- '(haskell-process-type 'cabal-new-repl)
  '(package-selected-packages
-   '(docker-tramp direnv agda2-mode nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(tide typescript-mode dune merlin-eldoc ocp-indent utop exec-path-from-shell terraform-mode docker-tramp direnv agda2-mode nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
 
 (use-package lsp-mode
   :hook (haskell-mode . lsp)
@@ -239,19 +193,7 @@
   :config
   (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
 	lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
-	lsp-haskell-process-args-hie nil)
-  ;; Comment/uncomment this line to see interactions between lsp client/server.
- ;(setq lsp-log-io t)
-  ;; (define-key evil-normal-state-map "gd" 'intero-goto-definition)
-  (define-key evil-normal-state-map "gn" 'flycheck-next-error)
-  (define-key evil-normal-state-map "gp" 'flycheck-previous-error))
-
-(use-package ormolu
-  :after haskell-mode
- ; :hook (haskell-mode . ormolu-format-on-save-mode)
-  :bind
-  (:map haskell-mode-map
-	("C-c r" . ormolu-format-buffer)))
+	lsp-haskell-process-args-hie nil))
 
 (use-package magit
   :defer t
@@ -263,7 +205,7 @@
 (setq apropos-sort-by-scores t)
 
 
-(set-face-attribute 'default nil :family "mononoki")
+(set-face-attribute 'default nil :family "mononoki" :height 150)
 
 ; don't create backup and autosave files
 (setq make-backup-files nil
@@ -299,8 +241,6 @@
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
          ("C-c a" . counsel-ag)
-	     ;; ("C-c C-r" . counsel-rg)
-	     ;; ("C-c C-p" . counsel-projectile-rg)
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history)))
 
@@ -361,23 +301,7 @@
   :ensure nil
   :commands (dired dired-jump)
   :custom ((dired-listing-switches "-agho --group-directories-first"))
-  :bind (("C-x C-j" . dired-jump))
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-up-directory
-    "l" 'dired-find-file))
-
-(use-package dired-single
-  :after dired)
-
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
-
-(use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "H" 'dired-hide-dotfiles-mode))
+  :bind (("C-x C-j" . dired-jump)))
 
 (use-package sh-script
   :config
@@ -402,11 +326,6 @@
 
   ;; Truncate buffer for performance
   (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-  ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
 
   (setq eshell-history-size         10000
         eshell-buffer-maximum-lines 10000
@@ -464,25 +383,44 @@
 (add-hook 'c-mode-hook #'electric-pair-mode)
 
 ;; ocaml
-(use-package tuareg
-  :hook (tuareg-mode . merlin-mode)
-  :hook (caml-mode . merlin-mode)
-  )
-(use-package merlin
-  :bind (:map merlin-mode-map
-			  ("C-c C-l" . tuareg-eval-buffer)
-			  ("C-c C-r" . tuareg-eval-region)
+;;; Major mode for editing OCaml files.
+(use-package tuareg :ensure)
+
+;;; Auto completion and more.
+(use-package merlin :ensure
+  :after tuareg
+  
+  :hook
+  (tuareg-mode . merlin-mode))
+
+;; Consistent indentation.
+(use-package ocp-indent :ensure
+  :after tuareg
+  
+  :hook
+  (tuareg-mode . ocp-setup-indent))
+
+;;; Type tips.
+(use-package merlin-eldoc :ensure
+  :after merlin
+  
+  :hook
+  (tuareg-mode . merlin-eldoc-setup))
+
+;;; Build system.
+(use-package dune :ensure)
+
+(use-package utop :ensure
+  :after tuareg
+  :bind (:map utop-mode-map
+			  ("C-c C-l" . utop-eval-buffer)
+			  ("C-c C-r" . utop-eval-region)
 			  )
-  )
-;;(add-hook 'caml-mode-hook #'merlin-mode)
+  :hook
+  (tuareg-mode . utop-minor-mode)
+  (utop-mode . company-mode))
 
-;; sml
-(use-package sml-mode)
-
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
+(setq utop-command "opam config exec -- utop -emacs")
 
 (use-package psc-ide)
 (use-package purescript-mode)
@@ -496,7 +434,26 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
-(use-package agda2-mode)
+(setq insert-directory-program "gls" dired-use-ls-dired t)
+(setq dired-listing-switches "-al --group-directories-first")
+
+(use-package terraform-mode)
+
+(use-package typescript-mode)
+(use-package tide
+  :ensure t
+  :mode(("\\.ts\\'" . typescript-mode))
+  :config
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1)
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save))
+
 ;; Measure performance
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -518,13 +475,3 @@
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 ;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
-
-(load-file (let ((coding-system-for-read 'utf-8))
-                (shell-command-to-string "agda-mode locate")))
-
-;; auto-load agda-mode for .agda and .lagda.md
-(setq auto-mode-alist
-   (append
-     '(("\\.agda\\'" . agda2-mode)
-       ("\\.lagda.md\\'" . agda2-mode))
-     auto-mode-alist))
