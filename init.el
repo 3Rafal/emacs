@@ -1,8 +1,10 @@
 
 ;; Disable menubar, toolbar and scrollbar
 (menu-bar-mode -1)
-(toggle-scroll-bar -1)
-(tool-bar-mode -1)
+(when (display-graphic-p)
+  (toggle-scroll-bar -1)
+  (tool-bar-mode -1))
+
 (setq mac-command-modifier 'meta)
 ; Enable show-paren-mode
 (show-paren-mode 1)
