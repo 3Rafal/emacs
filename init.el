@@ -19,9 +19,9 @@
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
   (setq mac-command-key-is-meta t)
-  (setq insert-directory-program "/opt/homebrew/bin/gls"))
+  (setq insert-directory-program "/opt/homebrew/bin/gls")
+  (setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0"))
 
-(setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0")
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
