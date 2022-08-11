@@ -16,7 +16,9 @@
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
-  (setq mac-command-key-is-meta t))
+  (setq mac-command-key-is-meta t)
+  (setq insert-directory-program "/opt/homebrew/bin/gls"))
+
 (setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0")
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -119,38 +121,33 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(docker-tramp direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(web-mode ember-mode docker-tramp direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
 
-(use-package lsp-mode
-  :hook (haskell-mode . lsp)
-  :commands lsp
-  :init
-  (setq lsp-use-native-json t
-	lsp-print-performance nil
-	lsp-log-io nil
-	lsp-diagnostics-modeline-scope :project
-	lsp-file-watch-threshold 5000
-	lsp-ui-doc-show-with-cursor nil)
-  ;;:config
-  ;; This is to make `lsp-mode' work with `direnv' and pick up the correct
-  ;; version of GHC.
-  (advice-add 'lsp :before #'direnv-update-environment)
-  )
+;; (use-package lsp-mode
+;;   :hook (haskell-mode . lsp)
+;;   :commands lsp
+;;   :init
+;;   (setq lsp-use-native-json t
+;; 	lsp-print-performance nil
+;; 	lsp-log-io nil
+;; 	lsp-diagnostics-modeline-scope :project
+;; 	lsp-file-watch-threshold 5000
+;; 	lsp-ui-doc-show-with-cursor nil))
 
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :init
-  (setq lsp-ui-doc-position 'bottom)
-  :config
-  (setq company-minimum-prefix-length 1)
-  (eldoc-mode -1))
+;; (use-package lsp-ui
+;;   :commands lsp-ui-mode
+;;   :init
+;;   (setq lsp-ui-doc-position 'bottom)
+;;   :config
+;;   (setq company-minimum-prefix-length 1)
+;;   (eldoc-mode -1))
 
-(use-package lsp-haskell
-  :after haskell-mode
-  :config
-  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
-	lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
-	lsp-haskell-process-args-hie nil))
+;; (use-package lsp-haskell
+;;   :after haskell-mode
+;;   :config
+;;   (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
+;; 	lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
+;; 	lsp-haskell-process-args-hie nil))
 
 (use-package magit
   :defer t
@@ -257,7 +254,8 @@
   :defer t
   :ensure nil
   :commands (dired dired-jump)
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :custom
+  (dired-listing-switches "-agho --group-directories-first")
   :bind (("C-x C-j" . dired-jump)))
 
 (use-package sh-script
@@ -360,6 +358,12 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
+
+(use-package ember-mode)
+(use-package web-mode
+  :ensure t
+  :mode (("\\.hbs$" .  web-mode)
+         ("\\.html$" .  web-mode)))
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
