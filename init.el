@@ -15,6 +15,9 @@
       initial-scratch-message nil)
 (setq column-number-mode t)
 
+;; Use mouse in tty
+(add-hook 'tty-setup-hook #'xterm-mouse-mode)
+
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
