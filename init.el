@@ -367,6 +367,10 @@
   :mode (("\\.hbs$" .  web-mode)
          ("\\.html$" .  web-mode)))
 
+;; Pyret
+(load "~/.emacs.d/pyret/pyret.el")
+(load "~/.emacs.d/pyret/pyret-debug-mode.el")
+
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
 
