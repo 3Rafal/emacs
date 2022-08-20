@@ -115,7 +115,9 @@
   :defer t
   :hook
   (haskell-mode . interactive-haskell-mode)
-  (haskell-mode . yas-minor-mode))
+  (haskell-mode . yas-minor-mode)
+  :custom
+  (haskell-process-load-or-reload-prompt t))
 
 (use-package yasnippet)
 (use-package haskell-snippets)
