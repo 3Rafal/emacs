@@ -334,15 +334,6 @@
 (setq company-idle-delay nil)
 (setq utop-command "opam config exec -- dune utop . -- -emacs")
 
-(use-package psc-ide)
-(use-package purescript-mode)
-(add-hook 'purescript-mode-hook
-  (lambda ()
-    (psc-ide-mode)
-    (company-mode)
-    (flycheck-mode)
-    (turn-on-purescript-indentation)))
-
 (use-package nix-mode
   :mode "\\.nix\\'")
 
