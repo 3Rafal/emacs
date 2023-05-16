@@ -111,42 +111,6 @@
   :after projectile
   :config (counsel-projectile-mode))
 
-(use-package haskell-mode
-  :defer t
-  :hook
-  (haskell-mode . interactive-haskell-mode)
-  (haskell-mode . yas-minor-mode))
-  ;; :custom
-  ;; (haskell-process-load-or-reload-prompt t))
-
-(define-minor-mode stack-exec-path-mode
-  "If this is a stack project, set `exec-path' to the path \"stack exec\" would use."
-  nil
-  :lighter ""
-  :global nil
-  (if stack-exec-path-mode
-      (when (and (executable-find "stack")
-                 (locate-dominating-file default-directory "stack.yaml"))
-        (let ((stack-path (replace-regexp-in-string
-                           "[\r\n]+\\'" ""
-                           (shell-command-to-string (concat "stack exec -- sh -c "
-                                                            (shell-quote-argument "echo $PATH"))))))
-          (setq-local exec-path (seq-uniq (parse-colon-path stack-path) 'string-equal))
-          (make-local-variable 'process-environment)
-          (setenv "PATH" (string-join exec-path path-separator))))
-    (kill-local-variable 'exec-path)
-    (kill-local-variable 'process-environment)))
-
-(add-hook 'haskell-mode-hook 'stack-exec-path-mode)
-
-(use-package ormolu
- :hook (haskell-mode . ormolu-format-on-save-mode)
- :bind
- (:map haskell-mode-map
-   ("C-c r" . ormolu-format-buffer)))
-
-(use-package yasnippet)
-(use-package haskell-snippets)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -154,7 +118,7 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(utop dune ocp-indent company ace-window racket-mode lcr dante web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired))
+   '(utop dune ocp-indent company ace-window racket-mode lcr dante web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired))
  '(safe-local-variable-values
    '((eval turn-off-auto-fill)
      (dante-target . "restaumatic-users-app:lib"))))
@@ -183,13 +147,6 @@
 ;;   :config
 ;;   (setq company-minimum-prefix-length 1)
 ;;   (eldoc-mode -1))
-
-;; (use-package lsp-haskell
-;;   :after haskell-mode
-;;   :config
-;;   (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
-;; 	lsp-haskell-process-wrapper-function (lambda (argv) (append '("nice") argv))
-;; 	lsp-haskell-process-args-hie nil))
 
 (use-package magit
   :defer t
