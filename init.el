@@ -22,8 +22,7 @@
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
   (setq mac-command-key-is-meta t)
-  (setq insert-directory-program "/opt/homebrew/bin/gls")
-  (setenv "LIBRARY_PATH" "/usr/local/opt/gcc/lib/gcc/10:/usr/local/opt/libgccjit/lib/gcc/10:/usr/local/opt/gcc/lib/gcc/10/gcc/x86_64-apple-darwin20/10.2.0"))
+  (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -60,9 +59,6 @@
 ;; Package load debug
 ;;(setq use-package-verbose t)
 
-(use-package exec-path-from-shell)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
 (setq comint-input-ignoredups t)
 
 (use-package auto-package-update
@@ -76,6 +72,10 @@
 
 (use-package no-littering)
 (setq-default tab-width 4)
+
+(use-package ace-window)
+(global-set-key (kbd "M-o") 'ace-window)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
 (use-package lisp-mode
   :ensure nil
@@ -115,9 +115,35 @@
   :defer t
   :hook
   (haskell-mode . interactive-haskell-mode)
-  (haskell-mode . yas-minor-mode)
-  :custom
-  (haskell-process-load-or-reload-prompt t))
+  (haskell-mode . yas-minor-mode))
+  ;; :custom
+  ;; (haskell-process-load-or-reload-prompt t))
+
+(define-minor-mode stack-exec-path-mode
+  "If this is a stack project, set `exec-path' to the path \"stack exec\" would use."
+  nil
+  :lighter ""
+  :global nil
+  (if stack-exec-path-mode
+      (when (and (executable-find "stack")
+                 (locate-dominating-file default-directory "stack.yaml"))
+        (let ((stack-path (replace-regexp-in-string
+                           "[\r\n]+\\'" ""
+                           (shell-command-to-string (concat "stack exec -- sh -c "
+                                                            (shell-quote-argument "echo $PATH"))))))
+          (setq-local exec-path (seq-uniq (parse-colon-path stack-path) 'string-equal))
+          (make-local-variable 'process-environment)
+          (setenv "PATH" (string-join exec-path path-separator))))
+    (kill-local-variable 'exec-path)
+    (kill-local-variable 'process-environment)))
+
+(add-hook 'haskell-mode-hook 'stack-exec-path-mode)
+
+(use-package ormolu
+ :hook (haskell-mode . ormolu-format-on-save-mode)
+ :bind
+ (:map haskell-mode-map
+   ("C-c r" . ormolu-format-buffer)))
 
 (use-package yasnippet)
 (use-package haskell-snippets)
@@ -128,18 +154,27 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(web-mode ember-mode docker-tramp direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general ormolu org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(utop dune ocp-indent company ace-window racket-mode lcr dante web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg haskell-snippets yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lsp-haskell lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired))
+ '(safe-local-variable-values
+   '((eval turn-off-auto-fill)
+     (dante-target . "restaumatic-users-app:lib"))))
 
-;; (use-package lsp-mode
-;;   :hook (haskell-mode . lsp)
-;;   :commands lsp
-;;   :init
-;;   (setq lsp-use-native-json t
-;; 	lsp-print-performance nil
-;; 	lsp-log-io nil
-;; 	lsp-diagnostics-modeline-scope :project
-;; 	lsp-file-watch-threshold 5000
-;; 	lsp-ui-doc-show-with-cursor nil))
+(use-package lsp-mode
+;;  :hook (haskell-mode . lsp)
+  :commands lsp
+  :init
+  (setq lsp-use-native-json t
+	lsp-print-performance nil
+	lsp-log-io nil
+	lsp-diagnostics-modeline-scope :project
+	lsp-file-watch-threshold 5000
+	lsp-ui-doc-show-with-cursor nil))
+
+(with-eval-after-load 'lsp-mode
+  (lsp-register-client
+   (make-lsp-client   :new-connection (lsp-stdio-connection '("dsl" "lsp"))
+                      :major-modes '(yaml-mode)
+                      :server-id 'dsl-lsp)))
 
 ;; (use-package lsp-ui
 ;;   :commands lsp-ui-mode
@@ -207,8 +242,8 @@
 
 ;; doom modeline
 (use-package all-the-icons)
-(use-package doom-modeline
-  :init (doom-modeline-mode 1))
+;(use-package doom-modeline
+;  :init (doom-modeline-mode 1))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -321,23 +356,14 @@
 ;;; Auto completion and more.
 (use-package merlin :ensure
   :after tuareg
-  
   :hook
   (tuareg-mode . merlin-mode))
 
 ;; Consistent indentation.
 (use-package ocp-indent :ensure
   :after tuareg
-  
   :hook
   (tuareg-mode . ocp-setup-indent))
-
-;;; Type tips.
-(use-package merlin-eldoc :ensure
-  :after merlin
-  
-  :hook
-  (tuareg-mode . merlin-eldoc-setup))
 
 ;;; Build system.
 (use-package dune :ensure)
@@ -352,7 +378,8 @@
   (tuareg-mode . utop-minor-mode)
   (utop-mode . company-mode))
 
-(setq utop-command "opam config exec -- utop -emacs")
+(setq company-idle-delay nil)
+(setq utop-command "opam config exec -- dune utop . -- -emacs")
 
 (use-package psc-ide)
 (use-package purescript-mode)
@@ -366,7 +393,6 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
-(use-package ember-mode)
 (use-package web-mode
   :ensure t
   :mode (("\\.hbs$" .  web-mode)
@@ -375,6 +401,11 @@
 ;; Pyret
 (load "~/.emacs.d/pyret/pyret.el")
 (load "~/.emacs.d/pyret/pyret-debug-mode.el")
+
+(use-package racket-mode)
+
+;; JavaScript
+(setq js-indent-level 2)
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
@@ -388,3 +419,14 @@
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 ;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+;; Agda
+(load-file (let ((coding-system-for-read 'utf-8))
+             (shell-command-to-string "agda-mode locate")))
+
+;; auto-load agda-mode for .agda and .lagda.md
+(setq auto-mode-alist
+   (append
+     '(("\\.agda\\'" . agda2-mode)
+       ("\\.lagda.md\\'" . agda2-mode))
+     auto-mode-alist))
