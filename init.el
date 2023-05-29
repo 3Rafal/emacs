@@ -295,6 +295,12 @@
   :config
   (eshell-git-prompt-use-theme 'robbyrussell))
 
+(defun sh ()
+    "creates a shell with a given name"
+    (interactive);; "Prompt\n shell name:")
+    (let ((shell-name (read-string "shell name: " (generate-new-buffer-name "*shell*"))))
+      (shell shell-name)))
+
 (use-package geiser
   :defer t)
 
