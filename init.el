@@ -17,12 +17,12 @@
 
 ;; Use mouse in tty
 (add-hook 'tty-setup-hook #'xterm-mouse-mode)
-
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
   (setq mac-command-key-is-meta t)
-  (setq insert-directory-program "/opt/homebrew/bin/gls"))
+  (setq insert-directory-program "gls" dired-use-ls-dired t)
+  (setq dired-listing-switches "-l --group-directories-first"))
 
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -61,6 +61,10 @@
 
 (setq comint-input-ignoredups t)
 
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 (use-package auto-package-update
   :custom
   (auto-package-update-interval 21)
@@ -72,6 +76,10 @@
 
 (use-package no-littering)
 (setq-default tab-width 4)
+
+(use-package direnv
+ :config
+ (direnv-mode))
 
 (use-package ace-window)
 (global-set-key (kbd "M-o") 'ace-window)
@@ -118,10 +126,10 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(utop dune ocp-indent company ace-window racket-mode lcr web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(typescript-mode opam-switch-mode exec-path-from-shell utop dune ocp-indent company ace-window racket-mode lcr web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
 
 (use-package lsp-mode
-;;  :hook (haskell-mode . lsp)
+  :hook (tuareg-mode . lsp)
   :commands lsp
   :init
   (setq lsp-use-native-json t
@@ -129,13 +137,9 @@
 	lsp-log-io nil
 	lsp-diagnostics-modeline-scope :project
 	lsp-file-watch-threshold 5000
-	lsp-ui-doc-show-with-cursor nil))
-
-(with-eval-after-load 'lsp-mode
-  (lsp-register-client
-   (make-lsp-client   :new-connection (lsp-stdio-connection '("dsl" "lsp"))
-                      :major-modes '(yaml-mode)
-                      :server-id 'dsl-lsp)))
+	lsp-ui-doc-show-with-cursor nil
+    lsp-lens-enable nil
+    ))
 
 ;; (use-package lsp-ui
 ;;   :commands lsp-ui-mode
@@ -312,12 +316,6 @@
 ;;; Major mode for editing OCaml files.
 (use-package tuareg :ensure)
 
-;;; Auto completion and more.
-(use-package merlin :ensure
-  :after tuareg
-  :hook
-  (tuareg-mode . merlin-mode))
-
 ;; Consistent indentation.
 (use-package ocp-indent :ensure
   :after tuareg
@@ -352,7 +350,20 @@
 (load "~/.emacs.d/pyret/pyret.el")
 (load "~/.emacs.d/pyret/pyret-debug-mode.el")
 
+;; Custom merlin
+;; (load "~/.emacs.d/opam-switch-mode.el")
+;; (load "~/Projects/Tarides/merlin/emacs/merlin-xref.el")
+;; (load "~/Projects/Tarides/merlin/emacs/merlin-imenu.el")
+;; (load "~/Projects/Tarides/merlin/emacs/merlin.el")
+
+(use-package opam-switch-mode
+  :ensure t
+  :hook
+  (tuareg-mode . opam-switch-mode))
+
 (use-package racket-mode)
+
+(use-package typescript-mode)
 
 ;; JavaScript
 (setq js-indent-level 2)
@@ -369,3 +380,4 @@
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 ;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+(put 'narrow-to-region 'disabled nil)
