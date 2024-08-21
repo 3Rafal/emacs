@@ -5,7 +5,6 @@
   (toggle-scroll-bar -1)
   (tool-bar-mode -1))
 
-(setq mac-command-modifier 'meta)
 ; Enable show-paren-mode
 (show-paren-mode 1)
 (blink-cursor-mode 0)
@@ -20,7 +19,7 @@
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
-  (setq mac-command-key-is-meta t)
+  (setq mac-command-key-is-meta nil)
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-l --group-directories-first"))
 
