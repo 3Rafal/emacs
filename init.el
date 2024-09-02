@@ -138,6 +138,7 @@
 	lsp-file-watch-threshold 5000
 	lsp-ui-doc-show-with-cursor nil
     lsp-lens-enable nil
+    lsp-ui-sideline-diagnostics-max-lines 5
     ))
 
 ;; (use-package lsp-ui
