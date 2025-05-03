@@ -23,6 +23,11 @@
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-l --group-directories-first"))
 
+(global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
+(global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
+
+(set-frame-parameter nil 'undecorated t)
+
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
@@ -139,6 +144,8 @@
 	lsp-ui-doc-show-with-cursor nil
     lsp-lens-enable nil
     lsp-ui-sideline-diagnostics-max-lines 5
+    lsp-signature-render-document nil
+    lsp-signature-auto-activate nil
     ))
 
 ;; (use-package lsp-ui
@@ -165,22 +172,15 @@
       auto-save-default nil
       create-lockfiles nil)
 
-; ido
-(ido-mode 1)
-
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
          ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
          :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
          ("C-l" . ivy-done)
          ("C-d" . ivy-switch-buffer-kill)
          :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
   (ivy-mode 1))
