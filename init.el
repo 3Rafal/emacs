@@ -190,12 +190,11 @@
   :init (ivy-rich-mode 1))
 
 (use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file)
+  :bind (("C-x b" . counsel-ibuffer)
          ("C-c a" . counsel-ag)
          :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history)))
+         ("C-r" . 'counsel-minibuffer-history))
+  :config (counsel-mode 1))
 
 ;; doom modeline
 (use-package all-the-icons)
