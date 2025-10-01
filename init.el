@@ -19,14 +19,17 @@
 (when (eq system-type 'darwin)
   (setq mac-right-option-modifier 'none)
   (setq frame-resize-pixelwise t)
-  (setq mac-command-key-is-meta nil)
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'super)
+
+
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-l --group-directories-first"))
 
 (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
 (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
-(set-frame-parameter nil 'undecorated t)
+;;(set-frame-parameter nil 'undecorated t)
 
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -56,9 +59,6 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
-
-;; TODO: consider switching to defer by default
-;; (setq use-package-always-defer t)
 
 ;; Package load debug
 ;;(setq use-package-verbose t)
@@ -130,7 +130,9 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(typescript-mode opam-switch-mode exec-path-from-shell utop dune ocp-indent company ace-window racket-mode lcr web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired)))
+   '(typescript-mode opam-switch-mode exec-path-from-shell utop dune ocp-indent company ace-window racket-mode lcr web-mode ember-mode direnv nix-mode merlin psc-ide purescript-mode protobuf-mode go-flycheck go-flymake go-mode sml-mode evil-surround csv-mode c-mode tuareg yaml-mode idris-mode edwina rustic which-key vterm use-package treemacs-projectile treemacs-evil rainbow-delimiters proof-general org-roam org-bullets ob-fsharp no-littering magit lsp-ui lispy ivy-rich helpful geiser evil-org evil-collection eshell-git-prompt elpy eglot-fsharp doom-themes doom-modeline dired-single dired-hide-dotfiles dash-functional csproj-mode csharp-mode counsel-projectile buttercup auto-package-update all-the-icons-dired))
+ '(warning-suppress-log-types '((comp) (comp) (comp) (comp) (comp) (comp)))
+ '(warning-suppress-types '((comp) (comp) (comp) (comp) (comp))))
 
 (use-package lsp-mode
   :hook (tuareg-mode . lsp)
