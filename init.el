@@ -304,7 +304,7 @@
   (setq select-active-regions nil
         select-enable-clipboard t
         select-enable-primary nil
-        interprogram-cut-function #'gui-select-text)
+        interprogram-cut-function #'gui-select-text))
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
