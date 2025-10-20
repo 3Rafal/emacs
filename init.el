@@ -29,7 +29,7 @@
 (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
 (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
-(set-frame-parameter nil 'undecorated t)
+;(set-frame-parameter nil 'undecorated t)
 
 ; try not to use tab characters ever when formatting code
 (setq-default indent-tabs-mode nil)
@@ -95,20 +95,6 @@
   :bind (("C-c C-r" . 'eval-region)
 	 ("C-c C-l" . 'eval-buffer)))
 
-;; Org 
-(defun rg/org-hyphen-setup ()
-  ;; Replace list hyphen with dot
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
-
-(use-package org
-  :defer t
-  :config
-  (setq org-ellipsis " ▼"
-	org-startup-indented t)
-  (rg/org-hyphen-setup))
-
 (use-package projectile
   :defer t
   :diminish projectile-mode
@@ -129,33 +115,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(typescript-mode racket-mode opam-switch-mode web-mode nix-mode utop dune ocp-indent tuareg yaml-mode geiser eshell-git-prompt vterm company doom-themes helpful which-key rainbow-delimiters all-the-icons ivy-rich magit lsp-mode counsel-projectile ace-window direnv no-littering auto-package-update exec-path-from-shell))
  '(warning-suppress-log-types '((comp) (comp) (comp) (comp) (comp) (comp)))
  '(warning-suppress-types '((comp) (comp) (comp) (comp) (comp))))
-
-(use-package lsp-mode
-  :hook (tuareg-mode . lsp)
-  :commands lsp
-  :init
-  (setq lsp-use-native-json t
-	lsp-print-performance nil
-	lsp-log-io nil
-	lsp-diagnostics-modeline-scope :project
-	lsp-file-watch-threshold 5000
-	lsp-ui-doc-show-with-cursor nil
-    lsp-lens-enable nil
-    lsp-ui-sideline-diagnostics-max-lines 5
-    lsp-signature-render-document nil
-    lsp-signature-auto-activate nil
-    ))
-
-;; (use-package lsp-ui
-;;   :commands lsp-ui-mode
-;;   :init
-;;   (setq lsp-ui-doc-position 'bottom)
-;;   :config
-;;   (setq company-minimum-prefix-length 1)
-;;   (eldoc-mode -1))
 
 (use-package magit
   :defer t
@@ -166,7 +129,7 @@
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
 
-(set-face-attribute 'default nil :family "mononoki" :height 150)
+(set-face-attribute 'default nil :family "Mononoki" :height 170)
 
 ; don't create backup and autosave files
 (setq make-backup-files nil
@@ -322,51 +285,26 @@
   :hook
   (tuareg-mode . ocp-setup-indent))
 
-;;; Build system.
-(use-package dune :ensure)
-
-(use-package utop :ensure
-  :after tuareg
-  :bind (:map utop-mode-map
-			  ("C-c C-l" . utop-eval-buffer)
-			  ("C-c C-r" . utop-eval-region)
-			  )
-  :hook
-  (tuareg-mode . utop-minor-mode)
-  (utop-mode . company-mode))
-
-(setq company-idle-delay nil)
-(setq utop-command "opam config exec -- dune utop . -- -emacs")
-
-(use-package nix-mode
-  :mode "\\.nix\\'")
-
-(use-package web-mode
-  :ensure t
-  :mode (("\\.hbs$" .  web-mode)
-         ("\\.html$" .  web-mode)))
-
 ;; Pyret
 (load "~/.emacs.d/pyret/pyret.el")
 (load "~/.emacs.d/pyret/pyret-debug-mode.el")
-
-;; Custom merlin
-;; (load "~/.emacs.d/opam-switch-mode.el")
-;; (load "~/Projects/Tarides/merlin/emacs/merlin-xref.el")
-;; (load "~/Projects/Tarides/merlin/emacs/merlin-imenu.el")
-;; (load "~/Projects/Tarides/merlin/emacs/merlin.el")
-
-(use-package opam-switch-mode
-  :ensure t
-  :hook
-  (tuareg-mode . opam-switch-mode))
-
-(use-package racket-mode)
 
 (use-package typescript-mode)
 
 ;; JavaScript
 (setq js-indent-level 2)
+
+(defun wslp ()
+  "Return t if running in WSL."
+  (and (eq system-type 'gnu/linux)
+       (string-match "microsoft" (shell-command-to-string "uname -r"))))
+
+(when (wslp)
+  ;; Fix WSLg clipboard behavior
+  (setq select-active-regions nil
+        select-enable-clipboard t
+        select-enable-primary nil
+        interprogram-cut-function #'gui-select-text)
 
 ;; Bring back to small threshold after init.
 (setq gc-cons-threshold (* 5 1000 1000))
