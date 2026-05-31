@@ -129,8 +129,6 @@
 ; Sort apropos by relevancy
 (setq apropos-sort-by-scores t)
 
-(set-face-attribute 'default nil :family "Mononoki" :height 170)
-
 ; don't create backup and autosave files
 (setq make-backup-files nil
       auto-save-default nil
@@ -196,6 +194,8 @@
   
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
+
+(set-face-attribute 'default nil :height 130)
 
 (use-package company
   :defer t
@@ -284,10 +284,6 @@
   :after tuareg
   :hook
   (tuareg-mode . ocp-setup-indent))
-
-;; Pyret
-(load "~/.emacs.d/pyret/pyret.el")
-(load "~/.emacs.d/pyret/pyret-debug-mode.el")
 
 (use-package typescript-mode)
 
